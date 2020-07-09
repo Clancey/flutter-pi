@@ -8,7 +8,7 @@ SOURCES = src/flutter-pi.c src/platformchannel.c src/pluginregistry.c src/consol
 	src/plugins/raw_keyboard.c src/plugins/gpiod.c src/plugins/spidev.c
 OBJECTS = $(patsubst src/%.c,out/obj/%.o,$(SOURCES))
 
-all: out/flutter-pi
+all: out/flutter-pi out/libFlutter.so
 
 out/obj/%.o: src/%.c 
 	@mkdir -p $(@D)
@@ -17,7 +17,8 @@ out/obj/%.o: src/%.c
 out/flutter-pi: $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CC) $(REAL_CFLAGS) $(REAL_LDFLAGS) $(OBJECTS) -o out/flutter-pi
+	$(CC) $(REAL_CFLAGS) $(REAL_LDFLAGS) $(OBJECTS) -shared -o out/libFlutter.so
 
 clean:
 	@mkdir -p out
-	rm -rf $(OBJECTS) out/flutter-pi out/obj/*
+	rm -rf $(OBJECTS) out/flutter-pi out/libFlutter.so out/obj/*

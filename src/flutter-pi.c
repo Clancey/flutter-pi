@@ -1806,6 +1806,66 @@ bool  parse_cmd_args(int argc, char **argv) {
 	
 	return true;
 }
+
+int initialEngine(){
+    
+   
+    // user specified no input devices. use /dev/input/event*.
+    glob("/dev/input/event*", GLOB_BRACE | GLOB_TILDE, NULL, &input_devices_glob);
+
+  
+    snprintf(flutter.asset_bundle_path, sizeof(flutter.asset_bundle_path), "%s", "/opt/flutter_sharp/flutter_assets");
+
+//    flutter.engine_argc = argc-optind;
+//    flutter.engine_argv = (const char* const*) &(argv[optind]);
+
+    for (int i=0; i<flutter.engine_argc; i++)
+        printf("engine_argv[%i] = %s\n", i, flutter.engine_argv[i]);
+    
+    
+    // check if asset bundle path is valid
+    if (!setup_paths()) {
+        return EXIT_FAILURE;
+    }
+
+    if (!init_message_loop()) {
+        return EXIT_FAILURE;
+    }
+    
+    // initialize display
+    printf("initializing display...\n");
+    if (!init_display()) {
+        return EXIT_FAILURE;
+    }
+    
+    // initialize application
+    printf("Initializing Application...\n");
+    if (!init_application()) {
+        return EXIT_FAILURE;
+    }
+
+    printf("Initializing Input devices...\n");
+    init_io();
+    
+    // read input events
+    printf("Running IO thread...\n");
+    run_io_thread();
+
+    
+    return EXIT_SUCCESS;
+}
+
+
+int runMainLoop(){    
+    // run message loop
+    printf("Running message loop...\n");
+    message_loop();
+
+    // exit
+    destroy_application();
+    destroy_display();
+}
+
 int   main(int argc, char **argv) {
 	if (!parse_cmd_args(argc, argv)) {
 		return EXIT_FAILURE;
