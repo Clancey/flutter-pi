@@ -1807,7 +1807,7 @@ bool  parse_cmd_args(int argc, char **argv) {
 	return true;
 }
 
-int initialEngine(){
+int initializeEngine(){
     
    
     // user specified no input devices. use /dev/input/event*.
